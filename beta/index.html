@@ -27,20 +27,36 @@
   <div class="site-rule" aria-hidden="true"></div>
 
   <main>
-    <section class="home-hero">
-      <div class="hero-media">
-        <img class="hero-photo" src="assets/elements/hero.jpg" alt="水口村山谷與海岸景色" width="2400" height="1278">
-        <div class="hero-text">
-          <p>誠邀您步入一場關於動物、植物、人類與地／水景相互交織的敘事旅程，</p>
-          <p>從嶄新視角體會大嶼山水口村的豐饒生態與人文景觀。</p>
+    <section class="home-hero home-cover">
+      <div class="cover">
+        <img class="cover-bg" src="assets/cover/cover-bg.jpg" alt="水口村山谷與海岸景色，前景是手繪的動物與植物線稿" width="2048" height="1365">
+        <div class="cover-species" aria-hidden="true">
+          <img class="sp sp--pineapple" data-species="pineapple" src="assets/cover/sp-pineapple.png" alt="">
+          <img class="sp sp--clam" data-species="clam" src="assets/cover/sp-clam.png" alt="">
+          <img class="sp sp--flower" data-species="flower" src="assets/cover/sp-flower.png" alt="">
+          <img class="sp sp--rice" data-species="rice" src="assets/cover/sp-rice.png" alt="">
+          <img class="sp sp--cattle" data-species="cattle" src="assets/cover/sp-cattle.png" alt="">
+          <img class="sp sp--crab" data-species="crab" src="assets/cover/sp-crab.png" alt="">
+          <img class="sp sp--butterfly" data-species="butterfly" src="assets/cover/sp-butterfly.png" alt="">
+          <img class="sp sp--shell" data-species="shell" src="assets/cover/sp-shell.png" alt="">
+          <img class="sp sp--buffalo" data-species="buffalo" src="assets/cover/sp-buffalo.png" alt="">
+          <img class="sp sp--bird" data-species="bird" src="assets/cover/sp-bird.png" alt="">
+        </div>
+        <div class="hero-plates">
+          <a class="plate memo memo--clam" href="species.html#clam" data-species="clam"><img src="assets/cover/memo-clam.png" alt="翅口（沙白）"></a>
+          <a class="plate memo memo--rice" href="species.html#rice" data-species="rice"><img src="assets/cover/memo-rice.png" alt="水稻"></a>
+          <a class="plate memo memo--buffalo" href="species.html#buffalo" data-species="buffalo"><img src="assets/cover/memo-buffalo.png" alt="水牛"></a>
         </div>
       </div>
-      <div class="hero-plates">
-        <span class="plate plate--cattle" aria-hidden="true"><img src="assets/elements/cattle-bg.png" alt="" width="800" height="498"></span>
-        <a class="plate plate--clam" href="species.html#clam"><img src="assets/elements/clam-bg.png" alt="翅口（沙白）" width="734" height="800"></a>
-        <a class="plate plate--rice" href="species.html#rice"><img src="assets/elements/rice-bg.png" alt="水稻" width="480" height="800"></a>
-        <a class="plate plate--buffalo" href="species.html#buffalo"><img src="assets/elements/buffalo-bg.png" alt="水牛" width="800" height="518"></a>
+      <div class="hero-text">
+        <p>誠邀您步入一場關於動物、植物、人類與地／水景相互交織的敘事旅程，</p>
+        <p>從嶄新視角體會大嶼山水口村的豐饒生態與人文景觀。</p>
       </div>
+      <ul class="cover-links" aria-label="物種故事">
+        <li><a href="species.html#clam">翅口（沙白）</a></li>
+        <li><a href="species.html#rice">水稻</a></li>
+        <li><a href="species.html#buffalo">水牛</a></li>
+      </ul>
     </section>
 
     <section class="guestbook" id="guestbook"></section>
@@ -50,5 +66,6 @@
   <script src="js/guestbook.js"></script>
   <script src="js/common.js"></script>
   <script src="js/transitions.js"></script>
+  <script src="js/cover.js"></script>
 </body>
 </html>

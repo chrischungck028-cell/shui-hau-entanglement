@@ -1746,3 +1746,50 @@ body::before {
   .paper-chip[aria-current="true"]::after,
   .paper-chip.is-active::after { transform: none; }
 }
+
+/* ---------- 首頁動畫封面（assets/cover/）：底圖＋各物種線稿圖層＋memo 紙連結 ---------- */
+/* 位置均為百分比，相對原圖 2048×1365；transform-origin 為各物種的擺動支點 */
+.home-hero.home-cover { height: auto; overflow: visible; background: var(--bg); }
+.cover { position: relative; width: min(100%, calc((100svh - var(--hdr-h, 110px)) * 2048 / 1365)); aspect-ratio: 2048 / 1365; margin: 0 auto; overflow: hidden; }
+.cover-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cover-species { position: absolute; inset: 0; pointer-events: none; }
+.sp { position: absolute; height: auto; max-width: none; will-change: transform; transition: filter .3s ease; }
+.sp.is-active { filter: drop-shadow(0 0 6px rgba(255,255,255,.9)); animation-duration: 1.2s; }
+/* 桌面：文字已在封面圖內，HTML 文字只供讀屏及搜尋器（視覺隱藏） */
+.home-cover .hero-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.home-cover .hero-plates { position: absolute; inset: 0; display: block; padding: 0; }
+.home-cover .plate { position: absolute; }
+.home-cover .plate img { filter: drop-shadow(0 2px 4px rgba(0,0,0,.18)); }
+.cover-links { display: none; }
+.sp--clam { left: 8.252%; top: 57.436%; width: 18.457%; transform-origin: 61.111% 93.189%; animation: sp-rock 4.2s ease-in-out infinite; }
+.sp--flower { left: 31.445%; top: 45.714%; width: 17.969%; transform-origin: 47.826% 101.235%; animation: sp-sway 5s ease-in-out infinite; }
+.sp--rice { left: 24.854%; top: 68.059%; width: 14.795%; transform-origin: 49.835% 100.0%; animation: sp-sway-lg 3.6s ease-in-out infinite; }
+.sp--cattle { left: 45.85%; top: 60.366%; width: 12.109%; transform-origin: 85.081% 76.543%; animation: sp-nod 6s ease-in-out infinite; }
+.sp--crab { left: 53.662%; top: 49.011%; width: 15.283%; transform-origin: 49.84% 91.304%; animation: sp-scuttle 3.2s ease-in-out infinite; }
+.sp--butterfly { left: 72.461%; top: 50.476%; width: 15.527%; transform-origin: 52.201% 51.536%; animation: sp-flap .45s ease-in-out infinite alternate, sp-float 3s ease-in-out infinite; }
+.sp--shell { left: 89.307%; top: 56.703%; width: 9.18%; transform-origin: 37.766% 96.907%; animation: sp-sway 6.5s ease-in-out infinite; }
+.sp--bird { left: 82.227%; top: 73.187%; width: 6.25%; transform-origin: 59.375% 93.956%; animation: sp-peck 4.4s ease-in-out infinite; }
+.sp--buffalo { left: 63.916%; top: 75.751%; width: 19.434%; transform-origin: 58.04% 47.13%; animation: sp-rock 7s ease-in-out infinite; }
+.sp--pineapple { left: 2.393%; top: 72.821%; width: 12.842%; transform-origin: 47.909% 96.552%; animation: sp-sway 6s ease-in-out infinite -2s; }
+.memo--clam { left: 6.836%; top: 52.381%; width: 9.521%; }
+.memo--rice { left: 32.715%; top: 61.538%; width: 10.498%; }
+.memo--buffalo { left: 83.252%; top: 86.081%; width: 11.963%; }
+@keyframes sp-rock { 0%,100% { rotate: -2deg; } 50% { rotate: 2deg; } }
+@keyframes sp-sway { 0%,100% { rotate: -2.5deg; } 50% { rotate: 2.5deg; } }
+@keyframes sp-sway-lg { 0%,100% { rotate: -3deg; } 40% { rotate: 2.5deg; } 70% { rotate: -.5deg; } }
+@keyframes sp-nod { 0%,55%,100% { rotate: 0deg; } 65% { rotate: 4deg; } 75% { rotate: 0deg; } 85% { rotate: 3deg; } }
+@keyframes sp-scuttle { 0%,100% { translate: 0 0; } 12% { translate: 5px -3px; } 25% { translate: 10px 0; } 37% { translate: 14px -3px; } 50% { translate: 14px 0; } 62% { translate: 9px -3px; } 75% { translate: 4px 0; } 87% { translate: 1px -3px; } }
+@keyframes sp-flap { from { scale: 1 1; } to { scale: .62 1; } }
+@keyframes sp-float { 0%,100% { translate: 0 0; } 50% { translate: 0 -12px; } }
+@keyframes sp-peck { 0%,70%,100% { rotate: 0deg; } 76% { rotate: -14deg; } 82% { rotate: 0deg; } 88% { rotate: -12deg; } 94% { rotate: 0deg; } }
+@media (prefers-reduced-motion: reduce) { .sp { animation: none !important; } }
+@media (max-width: 899px) {
+  .home-hero.home-cover { height: auto; }
+  .cover { width: 100%; }
+  /* 手機：封面內文字太細，在封面下方再顯示一次 */
+  .home-cover .hero-text { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; padding: 20px 20px 0; color: var(--text); text-shadow: none; text-align: center; font-size: 16px; line-height: 1.8; letter-spacing: .04em; }
+  .home-cover .hero-plates { position: absolute; inset: 0; display: block; padding: 0; }
+  .home-cover .plate { position: absolute; }
+  .cover-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0; padding: 20px; list-style: none; }
+  .cover-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--rule); background: var(--white); color: var(--text); text-decoration: none; font-size: 16px; }
+}
