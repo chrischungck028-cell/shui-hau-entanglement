@@ -17,7 +17,7 @@ window.ROUTE2 = {
       photos: [], links: [], missing: ["【相片】水口灘的沙白：DSC08818_adj.JPG"] },
     { id: "s2", order: 2, name: "泥灘（潮退時會露出的部分）", species: ["翅口（沙白）"], point_ref: "1.2", gps_dms: "22°13'10.3\"N 113°55'11.9\"E", lat: 22.219528, lng: 113.919972, precision: "approx",
       text: ["這兒的四足大怪獸不時走來想掘走我的同類，我們雖說不上是「同伴」，但知道他們被那個尖尖的東西刺到的下場，也沒有太好受呢。我們不像那些魚蝦蟹，能夠快速移動救自己脫離險境，最多只能用盡全力靠斧足鑽進沙子裡。躲不過的時候，也只能奢求那些大怪獸嫌棄沙子太多，把我們放回水中。"],
-      photos: [], links: [], missing: ["【影片】水口村民馮瑞珍展示如何使用翅口鐮尋找沙白位置：翅口鐮.mp4", "【相片】沙白／蜆（？）伸出斧足（TBC）：DSC08930.JPG", "【相片】其他泥灘生物：DSC08926.JPG、DSC08977.JPG、DSC08825_adj.JPG、DSC08803_adj.JPG（TBC）", "【影片】蟹：C2586.MP4"] },
+      photos: [], links: [], missing: ["【影片】水口村民展示如何使用翅口鐮尋找沙白位置：翅口鐮.mp4", "【相片】沙白／蜆（？）伸出斧足（TBC）：DSC08930.JPG", "【相片】其他泥灘生物：DSC08926.JPG、DSC08977.JPG、DSC08825_adj.JPG、DSC08803_adj.JPG（TBC）", "【影片】蟹：C2586.MP4"] },
     { id: "s3", order: 3, name: "水口灣", species: ["翅口（沙白）"], point_ref: "1.1", gps_dms: "22°13'15.5\"N 113°55'39.2\"E", lat: 22.220972, lng: 113.927556, precision: "approx",
       text: ["喜歡每天那段身軀能夠被海水完全覆蓋的時間，能夠隱身於水和沙之中，不用擔心四足大怪獸的突襲，只顧在黑暗的沙層靜靜待著就很好了。"],
       photos: [], links: [{ label: "天文潮汐預測資訊（石壁）", url: "https://www.hko.gov.hk/tc/tide/predtide.htm?s=SPW" }], missing: ["【相片】水口灘沙層：DSC08958.JPG"] },

@@ -18,11 +18,20 @@
     var list = el("ul", "team-list");
     (g.members || []).forEach(function (m) {
       var li = el("li", "team-member");
+      var image = el("img", "team-image");
+      image.src = "assets/team/" + m.image;
+      image.alt = "";
+      li.appendChild(image);
       /* 英文欄位（name_en、title_en 等）留作日後英文版，中文版暫不顯示 */
       li.appendChild(el("h3", "team-name", m.name));
       if (m.title) li.appendChild(el("p", "team-title", m.title));
-      if (m.same_as) li.appendChild(el("p", "team-note", "簡介見" + m.same_as));
-      if (m.bio) li.appendChild(el("p", "para team-bio", m.bio));
+      var biography = m.bio;
+      if (m.same_as) {
+        var group = GROUPS.find(function (entry) { return entry.group === m.same_as; });
+        var profile = group && group.members.find(function (member) { return member.name === m.name; });
+        if (profile) biography = profile.bio;
+      }
+      if (biography) li.appendChild(el("p", "team-bio", biography));
       list.appendChild(li);
     });
     sec.appendChild(list);

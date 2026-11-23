@@ -20,7 +20,7 @@
 
   var DEFAULT_CENTER = [22.2195, 113.9165];
   var DEFAULT_ZOOM = 15;
-  var DETAIL_ZOOM = 17;
+
 
   /* 只收錄已核准（approved）、有座標、類別已定的項目 */
   var ITEMS = (window.MAP_ITEMS || []).filter(function (it) {
@@ -40,7 +40,7 @@
   var guideMain = document.getElementById("guideMain");
   var guideDyn = document.getElementById("guideDyn");
   var mobileMQ = window.matchMedia("(max-width: 899px)");
-  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+
   var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   var map = null;
@@ -51,6 +51,7 @@
   var openerEl = null;
   var legendItems = {};
   var visitorEntries = [];
+  var selectedCategory = null;
 
   function el(tag, cls, text) {
     var node = document.createElement(tag);
@@ -109,11 +110,14 @@
 
   function fitAll() {
     if (!map) return;
-    if (ITEMS.length) {
+    var visible = markers.filter(function (entry) {
+      return !selectedCategory || entry.item.category === selectedCategory;
+    });
+    if (visible.length) {
       var p = fitPad();
-      map.fitBounds(L.latLngBounds(ITEMS.map(function (it) { return [it.lat, it.lng]; })),
+      map.fitBounds(L.latLngBounds(visible.map(function (entry) { return [entry.item.lat, entry.item.lng]; })),
         { padding: [p, p], animate: false, maxZoom: DEFAULT_ZOOM });
-    } else {
+    } else if (!selectedCategory) {
       map.setView(DEFAULT_CENTER, DEFAULT_ZOOM, { animate: false });
     }
   }
@@ -135,6 +139,23 @@
     if (on) entry.marker.openTooltip(); else entry.marker.closeTooltip();
   }
 
+  function bindMarkerElement(entry) {
+    entry.marker.on("add", function () {
+      var icon = entry.marker.getElement();
+      entry.el = icon;
+      if (!icon) return;
+      icon.setAttribute("aria-label", entry.marker.options.alt);
+      icon.addEventListener("focus", function () { setMarkerHover(entry, true); });
+      icon.addEventListener("blur", function () { setMarkerHover(entry, false); });
+      icon.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (!event.repeat) openCard(entry.item, icon);
+      });
+    });
+  }
+
   function renderMarkers() {
     markerLayer.clearLayers();
     markers = [];
@@ -149,12 +170,7 @@
       });
       marker.bindTooltip(cat.label, { direction: "top", offset: [0, -10] });
       var entry = { item: it, marker: marker, el: null };
-      marker.on("add", function () {
-        entry.el = marker.getElement();
-        if (!entry.el) return;
-        entry.el.addEventListener("focus", function () { setMarkerHover(entry, true); });
-        entry.el.addEventListener("blur", function () { setMarkerHover(entry, false); });
-      });
+      bindMarkerElement(entry);
       marker.on("mouseover", function () { setMarkerHover(entry, true); });
       marker.on("mouseout", function () { if (!entry.el || !entry.el.matches(":focus")) setMarkerHover(entry, false); });
       marker.on("click", function () { openCard(it, entry.el); });
@@ -180,6 +196,35 @@
     });
   }
 
+  function toggleCategory(category) {
+    selectedCategory = selectedCategory === category.key ? null : category.key;
+    if (openItem && selectedCategory && openItem.category !== selectedCategory) {
+      closeCard(false);
+    }
+    markers.forEach(function (entry) {
+      if (!selectedCategory || entry.item.category === selectedCategory) {
+        if (!markerLayer.hasLayer(entry.marker)) markerLayer.addLayer(entry.marker);
+      } else {
+        markerLayer.removeLayer(entry.marker);
+      }
+    });
+    LEGEND_ENTRIES.forEach(function (entry) {
+      legendItems[entry.key].setAttribute("aria-pressed", String(entry.key === selectedCategory));
+    });
+    fitAll();
+    updateFilterEmpty();
+    var count = selectedCategory ? markers.filter(function (entry) {
+      return entry.item.category === selectedCategory;
+    }).length : markers.length;
+    announce((selectedCategory ? category.label : "全部類別") + "：" + count + " 個標記");
+  }
+
+  function updateFilterEmpty() {
+    document.getElementById("filterEmpty").hidden = !selectedCategory || markers.some(function (entry) {
+      return entry.item.category === selectedCategory;
+    });
+  }
+
   function renderLegend() {
     legendList.textContent = "";
     LEGEND_ENTRIES.forEach(function (c) {
@@ -194,12 +239,8 @@
       b.addEventListener("mouseleave", function () { if (canHover) setCategoryHighlight(null); });
       b.addEventListener("focus", function () { if (b.matches(":focus-visible")) setCategoryHighlight(c.key); });
       b.addEventListener("blur", function () { setCategoryHighlight(null); });
-      b.addEventListener("click", function () {
-        var first = markers.filter(function (m) { return m.item.category === c.key; })[0];
-        if (first && map) {
-          map.flyTo([first.item.lat, first.item.lng], Math.max(map.getZoom(), DETAIL_ZOOM - 1), { duration: reduceMQ.matches ? 0 : 0.6 });
-        }
-      });
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () { toggleCategory(c); });
       legendItems[c.key] = b;
       li.appendChild(b);
       legendList.appendChild(li);
@@ -326,6 +367,7 @@
   }
 
   function openCard(it, markerEl) {
+    if (guideMain.hidden || wrap.classList.contains("is-picking")) return;
     openerEl = markerEl || null;
     openItem = it;
     cardEl.textContent = "";
@@ -335,16 +377,21 @@
     cardEl.setAttribute("aria-modal", "false");
     cardEl.setAttribute("aria-labelledby", "cardTitle");
     var t = document.getElementById("cardTitle");
+    cardEl.scrollTop = 0;
+    if (!mobileMQ.matches) {
+      var panel = cardEl.parentElement;
+      panel.scrollTop += cardEl.getBoundingClientRect().top - panel.getBoundingClientRect().top - 12;
+    }
     if (t) t.focus({ preventScroll: true });
     announce(((CAT_BY_KEY[it.category] || VISITOR).label) + "：" + (it.title || "資料卡已打開"));
   }
 
-  function closeCard() {
+  function closeCard(restoreFocus) {
     if (!openItem) return;
     openItem = null;
     cardEl.hidden = true;
     cardEl.textContent = "";
-    if (openerEl && openerEl.focus) openerEl.focus({ preventScroll: true });
+    if (restoreFocus !== false && openerEl && openerEl.isConnected && openerEl.focus) openerEl.focus({ preventScroll: true });
     openerEl = null;
   }
 
@@ -379,6 +426,7 @@
   /* 以新清單取代目前的訪客標記；list 為 { name, message, species, reply, lat, lng }[] */
   function addVisitorPoints(list) {
     if (!map) return;
+    if (openItem && openItem.category === "visitor") closeCard(false);
     visitorEntries.forEach(function (entry) {
       markerLayer.removeLayer(entry.marker);
       markers.splice(markers.indexOf(entry), 1);
@@ -405,26 +453,23 @@
       });
       marker.bindTooltip(VISITOR.label, { direction: "top", offset: [0, -10] });
       var entry = { item: it, marker: marker, el: null };
-      marker.on("add", function () {
-        entry.el = marker.getElement();
-        if (!entry.el) return;
-        entry.el.addEventListener("focus", function () { setMarkerHover(entry, true); });
-        entry.el.addEventListener("blur", function () { setMarkerHover(entry, false); });
-      });
+      bindMarkerElement(entry);
       marker.on("mouseover", function () { setMarkerHover(entry, true); });
       marker.on("mouseout", function () { if (!entry.el || !entry.el.matches(":focus")) setMarkerHover(entry, false); });
       marker.on("click", function () { openCard(it, entry.el); });
-      markerLayer.addLayer(marker);
+      if (!selectedCategory || selectedCategory === "visitor") markerLayer.addLayer(marker);
       markers.push(entry);
       visitorEntries.push(entry);
     });
     updateLegendCounts();
+    updateFilterEmpty();
   }
 
   /* ---------- 指南面板（供 map-contribute.js 使用） ---------- */
 
   /* 顯示專用容器（取代使用指南內容），回傳該容器 */
   function openPanel() {
+    closeCard(false);
     setGuide(true);
     guideDyn.textContent = "";
     guideDyn.hidden = false;
@@ -458,7 +503,8 @@
     document.head.appendChild(pickScript);
   }
   renderLegend();
-  renderMarkers();
+  if (map) renderMarkers();
+  updateLegendCounts();
   fitAll();
 
   /* 版面在載入後仍可能變動，載入完成及縮放後重算地圖尺寸 */
