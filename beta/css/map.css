@@ -1,0 +1,16 @@
+.legend-item[aria-pressed="true"] {
+  border-color: var(--text);
+  color: var(--white);
+  background: var(--text);
+  font-weight: 700;
+}
+@media (min-width: 900px) {
+  .map-page .data-card {
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-top: 28px;
+    overflow: visible;
+    box-shadow: none;
+  }
+}

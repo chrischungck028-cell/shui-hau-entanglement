@@ -1,0 +1,41 @@
+.page-about { background: var(--bg); }
+.page-about::before { display: none; }
+.about-reader {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30vw minmax(0, 1fr);
+  padding: clamp(26px, 3vw, 60px) 12vw 4vw 2.8vw;
+  font-size: clamp(17px, 1.53vw, 30px);
+  line-height: 1.65;
+}
+.about-reader [hidden] { display: none; }
+.about-reader h1 { margin: 0; font-size: clamp(28px, 2.35vw, 45px); line-height: 1.3; }
+.about-reader h1:focus { outline: none; }
+.reader-content { min-width: 0; }
+.reader-content p { margin: 0 0 1.45em; }
+#page-1 p + p { max-width: 30em; margin-top: 2.4em; }
+.reader-content ul { margin: -.6em 0 2.5em; padding-left: 1.15em; }
+.reader-content li { margin: .1em 0; }
+.reader-photo { width: 100%; aspect-ratio: 3 / 1; object-fit: cover; }
+.reader-species { display: grid; grid-template-columns: .8fr 1.35fr 1.35fr .8fr; gap: 1vw; align-items: end; margin-top: clamp(22px, 4.6vw, 88px); }
+.reader-species figure { margin: 0; text-align: center; }
+.reader-species img { width: 100%; height: clamp(88px, 12vw, 230px); object-fit: contain; object-position: bottom; }
+.reader-species figcaption { margin-top: .65em; font-size: .84em; }
+.reader-controls a { display: grid; place-items: center; width: clamp(44px, 6vw, 90px); height: clamp(44px, 8vw, 116px); position: absolute; top: min(43%, 35vh); }
+.reader-controls .reader-prev { left: 22vw; }
+.reader-controls .reader-next { right: 2.2vw; }
+.reader-controls a::before { content: ''; width: 49%; aspect-ratio: 1; border: solid currentColor; border-width: 1.5px 1.5px 0 0; transform: rotate(45deg); }
+.reader-controls .reader-prev::before { transform: rotate(-135deg); }
+.reader-controls a:focus-visible { outline: 2px solid currentColor; }
+@media (max-width: 760px) {
+  .about-reader { display: block; padding: 20px clamp(18px, 5vw, 38px) 28px; font-size: 17px; }
+  .about-reader h1 { margin-bottom: .7em; }
+  #page-1 p + p { margin-top: 1.2em; max-width: none; }
+  .reader-controls { display: flex; justify-content: space-between; margin-top: 20px; }
+  .reader-controls a { position: static; }
+  .reader-controls .reader-next { margin-left: auto; }
+  .reader-species { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .reader-species img { height: 64px; }
+  .reader-species figcaption { font-size: 13px; }
+  .reader-photo { aspect-ratio: 2 / 1; }
+}

@@ -7,6 +7,7 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/profiles.css">
   <script>document.documentElement.classList.add("is-entering");setTimeout(function(){document.documentElement.classList.remove("is-entering")},2000)</script>
 </head>
 <body class="page-species">
@@ -26,22 +27,18 @@
   </header>
   <div class="site-rule" aria-hidden="true"></div>
 
-  <main class="species">
-    <div class="species-top" id="speciesTop">
-      <div class="species-art">
-        <img id="speciesArt" src="assets/elements/clam-bg.png" alt="" width="734" height="800">
-      </div>
-      <div class="species-photos" id="speciesPhotos"></div>
-    </div>
-
-    <article class="species-text">
-      <h1 class="species-title" id="speciesName"></h1>
-      <p class="species-latin" id="speciesLatin"></p>
-      <div class="species-body" id="speciesBody"></div>
-      <p class="species-map-link" id="speciesMapLink"></p>
+  <main class="story-page">
+    <header class="story-heading">
+      <h1 id="speciesName"></h1>
+      <p id="speciesLatin" lang="la"></p>
+      <img id="speciesArt" alt="">
+    </header>
+    <article class="story-details" aria-labelledby="speciesName">
+      <div id="speciesBody"></div>
+      <div class="story-photos" id="speciesPhotos"></div>
+      <p id="speciesMapLink"></p>
+      <p id="speciesOthers"></p>
     </article>
-
-    <p class="species-others" id="speciesOthers"></p>
   </main>
 
   <script src="data/species.js"></script>
@@ -66,7 +63,7 @@
 
         var art = document.getElementById("speciesArt");
         art.src = s.art;
-        art.alt = s.name + "色塊插畫";
+        document.querySelector(".story-page").dataset.species = key;
 
         var photos = document.getElementById("speciesPhotos");
         photos.textContent = "";
@@ -74,7 +71,7 @@
         if (s.photos.length) {
           s.photos.forEach(function (p) {
             var fig = document.createElement("figure");
-            fig.className = "species-fig" + (s.photos.length === 1 ? " is-single" : "");
+            fig.className = "story-photo";
             var img = document.createElement("img");
             img.src = p.src;
             img.alt = p.alt;
@@ -84,7 +81,7 @@
         }
 
         document.getElementById("speciesName").textContent = s.name;
-        document.getElementById("speciesLatin").innerHTML = s.latin;
+        document.getElementById("speciesLatin").textContent = s.latin;
 
         var body = document.getElementById("speciesBody");
         body.textContent = "";

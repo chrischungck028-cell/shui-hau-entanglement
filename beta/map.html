@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/map.css">
   <script>document.documentElement.classList.add("is-entering");setTimeout(function(){document.documentElement.classList.remove("is-entering")},2000)</script>
 </head>
 <body class="page-map">
@@ -35,8 +36,8 @@
       <section class="map-legend paper-chip paper-chip--label" aria-labelledby="legendTitle">
         <h2 class="legend-title" id="legendTitle">資料標記</h2>
         <ul class="legend-list" id="legendList"></ul>
+        <p id="filterEmpty" hidden>此類別目前沒有標記。</p>
       </section>
-      <div class="data-card" id="dataCard" hidden></div>
     </div>
     <aside class="trail-panel guide" id="catPanel">
       <button type="button" class="guide-toggle" id="guideToggle" aria-expanded="true" aria-controls="guideBody">使用指南</button>
@@ -45,7 +46,7 @@
         <div id="guideMain">
           <h1 class="guide-title">使用指南</h1>
           <ul class="guide-list">
-            <li>地圖上的彩色圓點是資料標記，顏色代表不同類別，見右下角「資料標記」。</li>
+            <li>地圖上的彩色圓點是資料標記，顏色代表不同類別，在右下角「資料標記」選擇類別，即可只顯示該類標記；再按一次可顯示全部。</li>
             <li>滑鼠移到標記上，標記會亮起；按下標記可打開資料卡，閱讀文字、觀看相片及影音。</li>
             <li>標記位置為大約位置。</li>
             <li>想分享你在水口的發現？按「加入你的標記」，在地圖上點一下，再填寫內容；經審批後，標記會以空心圓顯示在地圖上。</li>
@@ -55,6 +56,7 @@
           <p class="contribute-note" id="contributeNote" role="status" hidden></p>
         </div>
       </div>
+      <div class="data-card" id="dataCard" hidden></div>
     </aside>
   </main>
 

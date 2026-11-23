@@ -1,0 +1,15 @@
+.stop-marker.route-station {
+  background: var(--white);
+  border: 2px solid var(--ink-dark);
+  box-shadow: 0 1px 4px #0008;
+}
+.stop-marker.route-station.is-current {
+  background: var(--ink-dark);
+  box-shadow: 0 0 0 3px var(--white), 0 2px 5px #0009;
+}
+.stop-marker.route-start {
+  background: var(--ink-dark);
+  border: 2px solid var(--white);
+}
+.route-start img { width: 75%; height: 75%; object-fit: contain; pointer-events: none; }
+.route-station:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }

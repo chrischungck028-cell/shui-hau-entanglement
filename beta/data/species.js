@@ -3,11 +3,11 @@ window.SPECIES = {
   clam: {
     name: "翅口（沙白）",
     latin: "Meretrix spp.",
-    art: "assets/elements/clam-bg.png",
+    art: "assets/about/white-clam.png",
     photos: [
-      { src: "assets/species/clam-1.jpg", alt: "泥灘上的一枚貝殼，周圍是濕潤的泥面" },
+      { src: "assets/species/clam-4.jpg", alt: "一人穿長褲與長靴，手持長柄工具在泥灘上作業（只見下半身）" },
       { src: "assets/species/clam-3.jpg", alt: "退潮後的泥灘表面，一支長柄工具斜伸向泥面" },
-      { src: "assets/species/clam-4.jpg", alt: "一人穿長褲與長靴，手持長柄工具在泥灘上作業（只見下半身）" }
+      { src: "assets/species/clam-1.jpg", alt: "泥灘上的一枚貝殼，周圍是濕潤的泥面" }
     ],
     body: [
       "翅口（沙白）是水口潮間帶的珍貴蜆類。在水口村民圍頭話中，沙白稱為「翅口」。村民會自製「翅口鐮」和「翅口耙」等採蜆工具，並將採來的沙白製成傳統家常菜式「瀨鑊邊」。牠們既是村民餐桌上連結海洋的象徵，也見證水口沙坪豐富多樣的生態。",
@@ -17,10 +17,9 @@ window.SPECIES = {
   buffalo: {
     name: "水牛",
     latin: "Bubalus bubalis",
-    art: "assets/elements/buffalo-bg.png",
+    art: "assets/about/buffalo.png",
     photos: [
-      { src: "assets/species/buffalo-1.jpg", alt: "一人背向鏡頭，與一頭水牛走在林間小路上" },
-      { src: "assets/species/buffalo-2.jpg", alt: "一頭水牛在圍欄內的田地中低頭吃草，前景為金黃色的作物" }
+      { src: "assets/species/DSC01500.jpg", alt: "一頭水牛走過樹叢前的淺水地帶" }
     ],
     body: [
       "在二十世紀初期，政府引入水牛以協助農民耕作，直至1970年代，本地稻米種植漸漸式微，村民便將牛隻野放。現時在南大嶼流浪水牛群約有115隻，平日游走各處濕地，啃食草葉維生。",
@@ -30,8 +29,10 @@ window.SPECIES = {
   rice: {
     name: "水稻",
     latin: "Oryza sativa",
-    art: "assets/elements/rice-bg.png",
-    photos: [],
+    art: "assets/about/crop.png",
+    photos: [
+      { src: "assets/species/DSC01374.jpg", alt: "稻田中的青綠色稻株與水面倒影" }
+    ],
     body: [
       "村民昔日過著自給自足的生活，以種植水稻為主。水口以前曾有五種米，包括齊眉、黑糯米、大粒穀、麻包錦和懶人米。每年有兩造收成，田邊則種有蔥、番薯、芋頭等雜糧和瓜菜。",
       "在將近稻米收成的季節，從村中望向海灣方向就見一片金黃色，是好幾輩村民深刻地景記憶。近年保育團體在濕地復耕稻米，以保育禾花雀和生物多樣性，水口米的味道也得以重現、跟長幼村民分享。"

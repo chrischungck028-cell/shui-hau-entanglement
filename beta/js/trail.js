@@ -180,7 +180,7 @@
     wrap.classList.toggle("is-tiles-off", off);
     mapNote.hidden = !off;
     mapNote.textContent = off
-      ? "底圖未能載入（離線或網絡不穩）。站點位置及連線仍然正確，可照常使用。"
+      ? "底圖未能載入（離線或網絡不穩）。仍可查看站點的大約位置與站序。"
       : "";
   }
 
@@ -230,12 +230,15 @@
     /* 觸控裝置點按地圖空白處：取消路線亮起 */
     map.on("click", function () { if (!canHover && activeRoute) setActiveRoute(null); });
     markerLayer = L.layerGroup().addTo(map);
+    map.on("zoomend", function () {
+      if (!EXPLORE_MODE) drawRouteLayers();
+    });
     updateTileState();
   }
 
   /* 依目前路線畫線：
      自由探索：路線一、二的實線（可 hover／點按）；路線三不畫線。
-     單一路線：路線一、二為示意虛線；路線三不畫虛線／折線，只顯示編號站點。 */
+     單一路線：路線一、二為示意虛線；路線三不畫虛線／折線，只顯示有座標的站點。 */
   function drawRouteLayers() {
     if (!map) return;
     lineLayer.clearLayers();
@@ -243,7 +246,15 @@
     activeRoute = null;
     if (EXPLORE_MODE) { drawExploreRoutes(); return; }
     if (ROUTE.id === "rice") return;   /* C4：路線三不畫虛線／折線 */
-    var latlngs = STOPS.filter(hasPos).map(function (s) { return [s.lat, s.lng]; });
+    if (!Number.isFinite(map.getZoom())) return;
+    var offsets = stationOffsets();
+    var latlngs = [];
+    STOPS.forEach(function (stop, i) {
+      if (!hasPos(stop)) return;
+      // 只調整示意線的畫面端點；站點座標仍取自資料檔。
+      var point = map.project([stop.lat, stop.lng]).add(offsets[i]);
+      latlngs.push(map.unproject(point));
+    });
     /* 底下先畫一條較寬的淺色底線（casing），讓深色虛線在森林底圖上清楚可見 */
     L.polyline(latlngs, {
       className: "route-casing",
@@ -275,7 +286,7 @@
 
   /* 地圖邊界內距：手機 40px，桌面 48px */
   function fitPad() {
-    return mobileMQ.matches ? 40 : 48;
+    return EXPLORE_MODE ? (mobileMQ.matches ? 40 : 48) : 62;
   }
 
   /* 依目前狀態設定視野（不做動畫）：介紹頁包住三個站點；站點則置中於該站；物種 hash 則對應物種點位 */
@@ -304,16 +315,6 @@
     if (!map) return;
     map.invalidateSize({ animate: false });   /* 保持地圖中心不變 */
     if (state.idx < 0) applyView();
-  }
-
-  function markerIcon(stop, current) {
-    var size = current ? 40 : 30;
-    return L.divIcon({
-      className: "stop-marker" + (current ? " is-current" : ""),
-      html: String(stop.n),
-      iconSize: [size, size],
-      iconAnchor: [size / 2, size / 2]
-    });
   }
 
   /* 探索模式：同一座標的站點合併；單站為圓點，多站顯示站數。標題列出路線名與站名。 */
@@ -356,7 +357,7 @@
     return Math.sqrt(dLat * dLat + dLng * dLng);
   }
 
-  function renderStopMarkers() {
+  function stationGroups() {
     var groups = {}, order = [];
     STOPS.forEach(function (s, i) {
       if (!hasPos(s)) return;
@@ -367,33 +368,76 @@
       if (key === null) { key = String(i); groups[key] = []; order.push(key); }
       groups[key].push(i);
     });
-    order.forEach(function (k) {
-      var idxs = groups[k];
-      if (EXPLORE_MODE) { renderExploreMarker(idxs); return; }
-      var s0 = STOPS[idxs[0]];
-      var current = idxs.indexOf(state.idx) !== -1;
-      var label = idxs.map(function (i) { return STOPS[i].n; }).join("·");
-      var h = current ? 40 : 30;
-      var w = Math.max(h, label.length * 9 + 16);
-      var icon = L.divIcon({
-        className: "stop-marker" + (current ? " is-current" : "") + (idxs.length > 1 ? " is-group" : ""),
-        html: label, iconSize: [w, h], iconAnchor: [w / 2, h / 2]
+    return order.map(function (key) { return groups[key]; });
+  }
+
+  // 分開重疊站的點擊範圍，位移以螢幕像素計，縮放後保持可選。
+  function stationOffsets() {
+    var offsets = [];
+    stationGroups().forEach(function (indices) {
+      indices.forEach(function (i, position) {
+        var angle = -Math.PI / 2 + position * 2 * Math.PI / indices.length;
+        var radius = indices.length > 1 ? 32 : 0;
+        offsets[i] = L.point(Math.round(radius * Math.cos(angle)), Math.round(radius * Math.sin(angle)));
       });
-      var names = idxs.map(function (i) { return STOPS[i].n + "．" + STOPS[i].place; }).join("、");
-      var marker = L.marker([s0.lat, s0.lng], { icon: icon, title: names, alt: "站點：" + names, keyboard: true, zIndexOffset: current ? 2000 : 1000 });
-      marker.on("click", function () {
-        var pos = idxs.indexOf(state.idx);
-        goTo(pos === -1 ? idxs[0] : idxs[(pos + 1) % idxs.length], { push: true });
-      });
-      markerLayer.addLayer(marker);
     });
+    return offsets;
   }
 
   function renderMarkers() {
     if (!map) return;
     markerLayer.clearLayers();
-    renderStopMarkers();
-
+    if (EXPLORE_MODE) {
+      stationGroups().forEach(renderExploreMarker);
+      return;
+    }
+    var firstMapped = STOPS.findIndex(hasPos);
+    var offsets = stationOffsets();
+    STOPS.forEach(function (stop, i) {
+      if (!hasPos(stop)) return;
+      var first = i === firstMapped;
+      var current = i === state.idx;
+      var size = first ? 44 : 32;
+      var image = first ? el("img") : "";
+      if (first) {
+        image.src = "assets/route-icons/" + (currentId === "rice" ? "rice" : "clam") + ".png";
+        image.alt = "";
+      }
+      var label = (first ? (i === 0 ? "路線起點，" : "地圖起點（首個有定位的站），") : "") +
+        "第 " + stop.n + " 站：" + stop.place;
+      var icon = L.divIcon({
+        className: "stop-marker route-station" + (first ? " route-start" : "") + (current ? " is-current" : ""),
+        html: image, iconSize: [size, size],
+        iconAnchor: [size / 2 - offsets[i].x, size / 2 - offsets[i].y]
+      });
+      var marker = L.marker([stop.lat, stop.lng], {
+        icon: icon, title: label, alt: label, keyboard: true, zIndexOffset: current ? 1000 : 0
+      }).addTo(markerLayer);
+      var node = marker.getElement();
+      if (!node) {
+        // Leaflet 在第一次 setView 之後才建立標記的 DOM。
+        marker.once("add", bind);
+      } else {
+        bind();
+      }
+      function bind() {
+        var button = marker.getElement();
+        button.dataset.station = String(stop.n);
+        button.setAttribute("aria-label", label);
+        if (current) button.setAttribute("aria-current", "step");
+        button.addEventListener("keydown", function (event) {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          event.stopPropagation();
+          if (!event.repeat) {
+            goTo(i, { push: true });
+            var selected = wrap.querySelector(".route-station.is-current");
+            if (selected) selected.focus({ preventScroll: true });
+          }
+        });
+      }
+      marker.on("click", function () { goTo(i, { push: true }); });
+    });
   }
 
   function moveMap() {
@@ -422,8 +466,8 @@
   var TAB_LABEL = { explore: "自由探索", laiwok: "一、瀨鑊邊", clam: "二、翅口（沙白）", rice: "三、水稻" };
   var CHIP_BY_ROUTE = { explore: "", laiwok: "paper-chip--cattle", clam: "paper-chip--clam", rice: "paper-chip--rice" };
   var KEY_TEXT = {
-    line: "示意連線：只表示站點次序，並非實際行走路線",
-    nolines: "編號依時間先後；站點位置為大約位置"
+    line: "站點位置為大約位置。示意連線只表示站點次序，並非實際行走路線",
+    nolines: "站序依時間先後；站點位置為大約位置"
   };
   var routeLines = {};
   var activeRoute = null;
