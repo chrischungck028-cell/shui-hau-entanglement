@@ -397,7 +397,7 @@
       if (!hasPos(stop)) return;
       var first = i === firstMapped;
       var current = i === state.idx;
-      var size = first ? 44 : 32;
+      var size = first ? 60 : 32;
       var image = first ? el("img") : "";
       if (first) {
         image.src = "assets/route-icons/" + (currentId === "rice" ? "rice" : "clam") + ".png";

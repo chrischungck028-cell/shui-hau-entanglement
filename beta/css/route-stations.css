@@ -1,15 +1,28 @@
 .stop-marker.route-station {
-  background: var(--white);
-  border: 2px solid var(--ink-dark);
-  box-shadow: 0 1px 4px #0008;
+  background: transparent;
+  border: 0;
 }
-.stop-marker.route-station.is-current {
+.route-station:not(.route-start)::before {
+  content: "";
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ink-dark);
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 1px 3px #0008;
+}
+.route-station.is-current:not(.route-start)::before {
+  width: 20px;
+  height: 20px;
   background: var(--ink-dark);
-  box-shadow: 0 0 0 3px var(--white), 0 2px 5px #0009;
+  border-color: var(--white);
 }
 .stop-marker.route-start {
   background: var(--ink-dark);
   border: 2px solid var(--white);
+  box-shadow: 0 1px 4px #0008;
 }
-.route-start img { width: 75%; height: 75%; object-fit: contain; pointer-events: none; }
+.stop-marker.route-start.is-current { box-shadow: 0 0 0 2px var(--white), 0 2px 5px #0009; }
+.route-start img { width: 88%; height: 88%; object-fit: contain; pointer-events: none; }
 .route-station:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
